@@ -18,6 +18,8 @@ class Trajectory_Manager():
     def save_new_coordinate(self,new_coordinate):
         self.list_coordinates_interest.append(new_coordinate)
         self.update_interested_coordinates_csv_list()
+        rospy.loginfo("Saved new coord, now are {} coords".format(len(self.list_coordinates_interest)))
+
         
         
     '''this function prints all coordinates saved on csv file '''
@@ -36,9 +38,11 @@ class Trajectory_Manager():
 
     '''this function delete the last coordinate of the global variables, after that, the 
     last coordinate of the csv file are deleted too.'''
-    def delete_last_coordinate():
-        #procura ultima coordenada e deleta ela
-        self.update_interested_coordinates_csv_list()
+    def delete_last_coordinate(self):
+        if(len(self.list_coordinates_interest)!= 0):
+            self.list_coordinates_interest.pop()
+            self.update_interested_coordinates_csv_list()
+            rospy.loginfo("Last coord deleted, now are {} coords".format(len(self.list_coordinates_interest)))
 
     '''this function initiates some global variables'''
     def set_initial_global_variables(self):
@@ -82,7 +86,12 @@ class Trajectory_Manager():
         #     reader = csv.reader(f)
         #     for row in reader:
         #         print("print of one row csv = %s"%str(row))
-        self.save_new_coordinate([4,4,5,0])
+        # self.save_new_coordinate([4,4,5,0])
+        self.save_new_coordinate([4.0,4.0,5.0,1.0])
+        self.save_new_coordinate([4.0,4.0,5.0,2.0])
+        self.delete_last_coordinate()
+        # self.save_new_coordinate([4,4,5,2])
+
         self.print_coordinates_list()
     def main(): 
         return
