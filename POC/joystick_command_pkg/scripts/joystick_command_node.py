@@ -129,11 +129,14 @@ class Command_Joystick:
                     self.change_level_operation("UP")
                 elif(msg.buttons[7] == 1):
                     self.change_level_operation("DOWN")
-            #Command to add a new coordinate to the list of interest coordinates # button "select" on simple usb controller
-            if(msg.buttons[8] == 1):
+            #Command to delet the last coordinate to the list of interest coordinates # button "select" and the button "start" on simple usb controller
+            if(msg.buttons[8] == 1 and msg.buttons[9]==1):
+                self.trajectory_manager.delete_last_coordinate()
+            #Command to add a new coordinate to the list of interest coordinates #  button "start" on simple usb controller
+            if(msg.buttons[8] == 0 and msg.buttons[9]==1):
                 new_coorditane = [self.drone.get_current_location().x ,self.drone.get_current_location().y ,self.drone.get_current_location().z ,self.drone.get_current_heading()]
                 self.trajectory_manager.save_new_coordinate(new_coorditane)
-                
+                    
         
   
     def go_next_previous_coord_saved(self,axes):
@@ -197,6 +200,7 @@ class Command_Joystick:
         self.target_drone_position.z = 3.0
         self.target_drone_position_heading = 0.0
 
+        #on this file should have a file called coordinates_list.csv
         self.list_coordinates_interest_csv_path = '/home/phz/catkin_ws/src/joystick_command_pkg/scripts/coordinates_list.csv'
 
     # this function is used to ensure that all drone position change orders update target_drone_position variables.
