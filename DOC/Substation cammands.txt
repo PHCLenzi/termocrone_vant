@@ -1,0 +1,82 @@
+
+Terminal 1:
+
+$	roslaunch iq_sim substation.launch
+
+Terminal 2(fonte<https://github.com/Intelligent-Quads/iq_tutorials/blob/master/docs/ros_intro.md> em launch gazebo word):
+
+(Fazer só a primeira vez)$	cp ~/catkin_ws/src/iq_sim/scripts/startsitl.sh ~
+
+$	~/startsitl.sh
+
+Terminal 3 :Rodar o mavros(fonte https://www.youtube.com/watch?v=eRAfeC8OFfs t=11:00)
+
+$ roslaunch iq_sim apm.launch 
+
+Terminal 4(fonte https://www.youtube.com/watch?v=eRAfeC8OFfs e https://github.com/Intelligent-Quads/iq_gnc/blob/master/docs/py_gnc_functions.md)
+(!! antes de rodar esse comando abaixo, deve-se ver a certificação de GPS conectado no console do SITL.
+Depois de dar o comando abaixo, deve-se ir no terminal do SITL(terminal 2) e botar no modo guiado(mode guided)!!!)
+
+(antigo$ rosrun keyboard_command_pkg square.py )
+$ rosrun joystick_command_pkg joystick_command_node.py 
+
+#######Comandos para abrir um exemplo de comando com joystick e turtle sim
+fonte1=<http://wiki.ros.org/joy/Tutorials/ConfiguringALinuxJoystick>
+fonte2=<https://andrewdai.co/xbox-controller-ros.html#joy-of-ros>
+
+#(terminal 1) starting ROS  
+ roscore
+
+ #(terminal 2)Cobnectar o joystick no pc depois dar permissão para ler o js0(joystick)
+ $sudo chmod a+rw /dev/input/js0
+ $rosparam set joy_node/dev "/dev/input/js0"
+
+ #(terminal 3)starting the joy node (in another new window)
+ (não deu por aqui)rosrun joy joy_node
+ (comando de baixo em <https://answers.ros.org/question/262821/joy_node-is-missing-in-optrosindigosharejoy/>)
+ 
+ $rosrun /opt/ros/noetic/lib/joy joy_node
+ 
+ #(terminal 4)para ver o que está endo postado no topic /joy
+ $ rostopic echo /joy
+
+ # starting turtlesim (in another new window)
+ rosrun turtlesim turtlesim_node
+
+ # starting the "translator" node (in another new window)
+ rosrun learning_joy turtle_teleop_joy.py
+
+#######Comandos para iniciar uma simulação sem o gazebo
+para só abrir o bazebo:
+$ gazebo --verbose ~/catkin_ws/src/iq_sim/worlds/substation.world
+
+Exempolo código node:roslaunch iq_sim apm.launch 
+#!/usr/bin/env python
+import rospy
+from sdt_msgs.msg import String
+
+def publisher():
+
+    pub = rospy.Publisher('string_publisher_topic_name',String, queue_size= 10)
+    rate = rospy.Rate(1)#frenquency of publication
+
+    msg_to_publish = String()
+
+    counter = 0
+
+    while not rospy.is_shutdown():
+        string_to_publish = "Publishing %d" %counter
+        counter += 1
+
+        msg_to_publish.data = string_to_publish# put the message into de topic
+        pub.publish(msg_to_publish)
+
+        rospy.loginfo(string_to_publish)
+
+if __name__ == "__main__":
+    rospy.init_node("camoando_node")
+    publisher()
+    
+    
+   ## teste deletar
+   cd ~/ardupilot/ArduCopter/ && /bin/python3  sim_vehicle.py -v ArduCopter -f gazebo-iris --console
